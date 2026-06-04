@@ -1,0 +1,144 @@
+// Todo List Life Dashboard - Application Logic
+
+// ---------------------------------------------------------------------------
+// Storage Utilities
+// Wraps localStorage reads/writes with consistent error handling.
+// Keys in use: tld_tasks, tld_links
+// ---------------------------------------------------------------------------
+const storageUtils = {
+  /**
+   * Serialise `value` to JSON and persist it under `key`.
+   * Re-throws any exception raised by localStorage.setItem (e.g. quota
+   * exceeded, private-mode block) so the caller can handle it.
+   *
+   * @param {string} key
+   * @param {*} value  — anything JSON-serialisable
+   * @throws {DOMException|TypeError} on storage failure
+   */
+  save(key, value) {
+    const json = JSON.stringify(value);
+    localStorage.setItem(key, json); // throws on quota / private-mode
+  },
+
+  /**
+   * Read and deserialise the value stored under `key`.
+   * Returns `fallback` when:
+   *   - the key does not exist (getItem returns null), or
+   *   - the stored string is not valid JSON (SyntaxError from JSON.parse).
+   *
+   * @param {string} key
+   * @param {*} fallback  — returned on miss or parse error
+   * @returns {*} parsed value, or fallback
+   */
+  load(key, fallback) {
+    const raw = localStorage.getItem(key);
+    if (raw === null) {
+      return fallback;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      // Corrupt / non-JSON data — silently discard and return fallback
+      return fallback;
+    }
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Greeting Widget
+// Displays the current time (12-hour format), date, and a time-of-day
+// greeting. Refreshes every 60 seconds via setInterval.
+// DOM target: #greeting-widget
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert a Date object to a 12-hour time string.
+ * Hour 0  → "12:xx AM"
+ * Hours 1–11  → "1:xx AM" – "11:xx AM"
+ * Hour 12 → "12:xx PM"
+ * Hours 13–23 → "1:xx PM" – "11:xx PM"
+ *
+ * @param {Date} date
+ * @returns {string}  e.g. "1:30 PM", "12:00 AM"
+ */
+function formatTime(date) {
+  const h24 = date.getHours();
+  const minutes = date.getMinutes();
+
+  let hour12;
+  if (h24 === 0) {
+    hour12 = 12;
+  } else if (h24 <= 12) {
+    hour12 = h24;
+  } else {
+    hour12 = h24 - 12;
+  }
+
+  const period = h24 < 12 ? 'AM' : 'PM';
+  const mm = String(minutes).padStart(2, '0');
+
+  return `${hour12}:${mm} ${period}`;
+}
+
+/**
+ * Convert a Date object to a human-readable date string.
+ *
+ * @param {Date} date
+ * @returns {string}  e.g. "Monday, 2 June 2025"
+ */
+function formatDate(date) {
+  return date.toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Return the appropriate time-of-day greeting for a given hour (0–23).
+ *
+ * 05–11  → "Good Morning"
+ * 12–17  → "Good Afternoon"
+ * 18–20  → "Good Evening"
+ * 21–23, 0–4 → "Good Night"
+ *
+ * @param {number} hours  integer in [0, 23]
+ * @returns {"Good Morning"|"Good Afternoon"|"Good Evening"|"Good Night"}
+ */
+function getGreeting(hours) {
+  if (hours >= 5 && hours <= 11) {
+    return 'Good Morning';
+  } else if (hours >= 12 && hours <= 17) {
+    return 'Good Afternoon';
+  } else if (hours >= 18 && hours <= 20) {
+    return 'Good Evening';
+  } else {
+    return 'Good Night';
+  }
+}
+
+const greetingWidget = {
+  /** Render immediately, then refresh every 60 seconds. */
+  init() {
+    this.render();
+    setInterval(() => this.render(), 60_000);
+  },
+
+  /** Update the greeting widget DOM from the current Date. */
+  render() {
+    const now = new Date();
+
+    const timeEl = document.getElementById('greeting-time');
+    const dateEl = document.getElementById('greeting-date');
+    const msgEl = document.getElementById('greeting-message');
+
+    if (timeEl) timeEl.textContent = formatTime(now);
+    if (dateEl) dateEl.textContent = formatDate(now);
+    if (msgEl) msgEl.textContent = getGreeting(now.getHours());
+  },
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  greetingWidget.init();
+});

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Todo List Life Dashboard</title>
+  </head>
+  <body>
+
+    <!-- Greeting Widget -->
+    <section id="greeting-widget">
+      <p id="greeting-time" class="greeting-time"></p>
+      <p id="greeting-date" class="greeting-date"></p>
+      <h1 id="greeting-text" class="greeting-text"></h1>
+    </section>
+
+    <!-- Focus Timer Widget -->
+    <section id="focus-timer">
+      <div id="timer-display" class="timer-display">25:00</div>
+      <div class="timer-controls">
+        <button id="timer-start" type="button">Start</button>
+        <button id="timer-stop" type="button">Stop</button>
+        <button id="timer-reset" type="button">Reset</button>
+      </div>
+      <div class="timer-alert" id="timer-alert" style="display: none;">
+        Focus session complete! Take a break.
+      </div>
+    </section>
+
+    <!-- Task List Widget -->
+    <section id="task-list">
+      <form id="task-add-form" class="add-form" novalidate>
+        <label for="task-input">New Task</label>
+        <input
+          type="text"
+          id="task-input"
+          name="task-input"
+          placeholder="What do you need to do?"
+          autocomplete="off"
+        />
+        <button type="submit">Add</button>
+      </form>
+      <p class="error-msg" id="task-error-msg" style="display: none;"></p>
+      <ul id="task-list-container" class="task-list-container"></ul>
+    </section>
+
+    <!-- Quick Links Widget -->
+    <section id="quick-links">
+      <form id="link-add-form" class="add-form" novalidate>
+        <label for="link-label-input">Label</label>
+        <input
+          type="text"
+          id="link-label-input"
+          name="link-label"
+          placeholder="Link label"
+          autocomplete="off"
+        />
+        <label for="link-url-input">URL</label>
+        <input
+          type="url"
+          id="link-url-input"
+          name="link-url"
+          placeholder="https://example.com"
+          autocomplete="off"
+        />
+        <button type="submit">Add Link</button>
+      </form>
+      <p class="error-msg" id="link-error-msg" style="display: none;"></p>
+      <div id="links-container" class="links-container"></div>
+    </section>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
