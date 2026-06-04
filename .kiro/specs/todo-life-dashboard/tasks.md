@@ -23,7 +23,7 @@ Implement a zero-dependency, single-page productivity dashboard in vanilla HTML/
     - _Requirements: 7.1, 7.2, 7.3, 10.1, 10.2, 10.3_
 
 
-- [ ] 3. Implement Greeting Widget
+- [x] 3. Implement Greeting Widget
   - [x] 3.1 Implement `greetingWidget` helper functions in `js/app.js`
     - Write `formatTime(date)`: converts a `Date` object to a 12-hour string (e.g., `"1:30 PM"`, `"12:00 AM"`); hour 0 → 12, hours 13–23 → 1–11
     - Write `formatDate(date)`: returns a human-readable date string (e.g., `"Monday, 2 June 2025"`) using `toLocaleDateString` with appropriate options or manual day/month arrays
@@ -32,21 +32,21 @@ Implement a zero-dependency, single-page productivity dashboard in vanilla HTML/
 
 
 
-  - [-] 3.3 Implement `greetingWidget.init()` and `greetingWidget.render()` in `js/app.js`
+  - [x] 3.3 Implement `greetingWidget.init()` and `greetingWidget.render()` in `js/app.js`
     - `render()`: queries `#greeting-widget` for its time, date, and greeting display elements; calls `formatTime`, `formatDate`, `getGreeting` with `new Date()`; updates their `textContent`
     - `init()`: calls `render()` immediately, then sets a `setInterval` callback to call `render()` every 60 000 ms
     - Wire `greetingWidget.init()` inside the `DOMContentLoaded` listener
     - _Requirements: 2.1, 2.2, 2.3_
 
 - [ ] 4. Implement Focus Timer
-  - [~] 4.1 Implement `formatTimer` helper and `focusTimer` state in `js/app.js`
+  - [x] 4.1 Implement `formatTimer` helper and `focusTimer` state in `js/app.js`
     - Write `formatTimer(seconds)`: converts an integer [0–1500] to a `"MM:SS"` zero-padded string (e.g., `1500 → "25:00"`, `59 → "00:59"`, `0 → "00:00"`)
     - Declare closure-private state: `let remainingSeconds = 1500` and `let intervalId = null`
     - _Requirements: 3.1, 3.3_
 
 
 
-  - [~] 4.3 Implement `focusTimer.init()`, `start()`, `stop()`, `reset()` and `notifyDone()` in `js/app.js`
+  - [-] 4.3 Implement `focusTimer.init()`, `start()`, `stop()`, `reset()` and `notifyDone()` in `js/app.js`
     - `init()`: renders `"25:00"` into `#focus-timer`'s display element; binds click listeners to Start, Stop, Reset buttons
     - `start()`: guard — if `intervalId !== null` return early; set `intervalId = setInterval(tickDown, 1000)`
     - `tickDown()`: decrement `remainingSeconds`; update display via `formatTimer`; if `remainingSeconds <= 0` call `stop()` then `notifyDone()`

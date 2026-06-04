@@ -131,7 +131,7 @@ const greetingWidget = {
 
     const timeEl = document.getElementById('greeting-time');
     const dateEl = document.getElementById('greeting-date');
-    const msgEl = document.getElementById('greeting-message');
+    const msgEl = document.getElementById('greeting-text');
 
     if (timeEl) timeEl.textContent = formatTime(now);
     if (dateEl) dateEl.textContent = formatDate(now);
@@ -142,3 +142,40 @@ const greetingWidget = {
 document.addEventListener('DOMContentLoaded', function () {
   greetingWidget.init();
 });
+
+// ---------------------------------------------------------------------------
+// Focus Timer
+// 25-minute (1500-second) countdown with Start, Stop, and Reset controls.
+// Timer state lives only in closure variables — it is NOT persisted to
+// localStorage. A page reload always resets to 25:00.
+// DOM target: #focus-timer
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert an integer number of seconds [0–1500] to a zero-padded "MM:SS"
+ * string.
+ *
+ * Examples:
+ *   1500 → "25:00"
+ *     59 → "00:59"
+ *      0 → "00:00"
+ *
+ * @param {number} seconds  integer in [0, 1500]
+ * @returns {string}  e.g. "25:00", "00:59"
+ */
+function formatTimer(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+const focusTimer = (function () {
+  // ── Closure-private state ────────────────────────────────────────────────
+  let remainingSeconds = 1500; // 25 * 60
+  let intervalId = null;       // null = not running
+  // ────────────────────────────────────────────────────────────────────────
+
+  return {
+    // Public methods will be implemented in task 4.3
+  };
+})();
