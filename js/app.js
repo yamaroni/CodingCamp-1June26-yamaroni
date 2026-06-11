@@ -141,6 +141,7 @@ const greetingWidget = {
 
 document.addEventListener('DOMContentLoaded', function () {
   greetingWidget.init();
+  focusTimer.init();
 });
 
 // ---------------------------------------------------------------------------
@@ -175,7 +176,98 @@ const focusTimer = (function () {
   let intervalId = null;       // null = not running
   // ────────────────────────────────────────────────────────────────────────
 
-  return {
-    // Public methods will be implemented in task 4.3
+  /**
+   * Decrement remainingSeconds by 1, update the display, and stop + notify
+   * when the countdown reaches zero.
+   */
+  function tickDown() {
+    remainingSeconds -= 1;
+    const displayEl = document.getElementById('timer-display');
+    if (displayEl) {
+      displayEl.textContent = formatTimer(remainingSeconds);
+    }
+    if (remainingSeconds <= 0) {
+      focusTimerPublic.stop();
+      focusTimerPublic.notifyDone();
+    }
+  }
+
+  /**
+   * Show a browser Notification if permission has been granted, otherwise
+   * fall back to the on-page `.timer-alert` banner inside `#focus-timer`.
+   */
+  function notifyDone() {
+    if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+      new Notification('Focus session complete!');
+    } else {
+      const alertEl = document.getElementById('timer-alert');
+      if (alertEl) {
+        alertEl.style.display = '';
+      }
+    }
+  }
+
+  const focusTimerPublic = {
+    /**
+     * Render "25:00" into #timer-display and bind click listeners to the
+     * Start, Stop, and Reset buttons. (Req 3.1)
+     */
+    init() {
+      const displayEl = document.getElementById('timer-display');
+      if (displayEl) {
+        displayEl.textContent = formatTimer(remainingSeconds);
+      }
+
+      const startBtn = document.getElementById('timer-start');
+      const stopBtn  = document.getElementById('timer-stop');
+      const resetBtn = document.getElementById('timer-reset');
+
+      if (startBtn) startBtn.addEventListener('click', () => this.start());
+      if (stopBtn)  stopBtn.addEventListener('click',  () => this.stop());
+      if (resetBtn) resetBtn.addEventListener('click', () => this.reset());
+    },
+
+    /**
+     * Begin the 1-second countdown.
+     * Guard: if already running (intervalId !== null), return early. (Req 3.7)
+     */
+    start() {
+      if (intervalId !== null) return; // already running — ignore duplicate (Req 3.7)
+      intervalId = setInterval(tickDown, 1000);
+    },
+
+    /**
+     * Pause the countdown and retain remaining time. (Req 3.4)
+     */
+    stop() {
+      clearInterval(intervalId);
+      intervalId = null;
+    },
+
+    /**
+     * Stop any active countdown and reset remaining time to 25:00. (Req 3.5)
+     */
+    reset() {
+      this.stop();
+      remainingSeconds = 1500;
+      const displayEl = document.getElementById('timer-display');
+      if (displayEl) {
+        displayEl.textContent = formatTimer(remainingSeconds); // "25:00"
+      }
+      // Hide any visible alert banner when the timer is reset
+      const alertEl = document.getElementById('timer-alert');
+      if (alertEl) {
+        alertEl.style.display = 'none';
+      }
+    },
+
+    /**
+     * Notify the user that the focus session is complete. (Req 3.6)
+     * Uses browser Notification API if permission is granted; otherwise falls
+     * back to the on-page `.timer-alert` banner.
+     */
+    notifyDone,
   };
+
+  return focusTimerPublic;
 })();
